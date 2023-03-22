@@ -31,14 +31,12 @@ def main():
                         'conformed_period': [],
                         'filed_date': [],
                         'date_as_of_change': [],
-                        'filing_type': []})
+                        'filing_type': [],
+                        'file_path': []})
     for cik in tqdm(cik_list):
         path = r"results\sec-edgar-filings\{}\{}\\".format(cik, filing_type)
         for folder in [name for name in os.listdir(path) if os.path.isdir(os.path.join(path, name))]:
                 filename = path + folder + r"\full-submission.txt"
-                match = re.search('\-(.*?)\-', folder)
-                # year = "20" + match.group(1)
-                word_count = np.zeros(len(word_list))
                 # Open the file in read mode
                 with open(filename, 'r') as f:
                     # Read the contents of the file into a variable
@@ -46,7 +44,9 @@ def main():
                 # Get dates
                 conf_date, filed_date, change_date = get_date(file_contents)
                 # New row data
-                new_row = pd.DataFrame({'cik': cik, 'conformed_period': conf_date, 'filed_date': filed_date, 'date_as_of_change': change_date, 'filing_type': filing_type}, index=[0])
+                new_row = pd.DataFrame({'cik': cik, 'conformed_period': conf_date, 'filed_date': filed_date, 'date_as_of_change': change_date, 'filing_type': filing_type, 'file_path': filename}, index=[0])
+                # Initialize word count vector
+                word_count = np.zeros(len(word_list))
                 # Count for each key word
                 for word in word_list:
                     # Count
