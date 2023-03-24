@@ -1,8 +1,8 @@
 # Specify the type of file
-filing_type = "10-K"
+filing_type = "8-K"
 
 # Define start and end dates
-start_date = '2022-01-01'           #YYYY-MM-DD
+start_date = '2002-01-01'           #YYYY-MM-DD
 end_date = '2023-03-22'             #YYYY-MM-DD
 
 # File position (do not change)

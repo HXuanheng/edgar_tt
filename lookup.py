@@ -26,12 +26,34 @@ def get_date(file_contents):
         change = pd.NaT
     return conf, filed, change
 
+# (To be improved)
+def get_iteminfo(file_contents):
+    try:
+        lines = file_contents.split("\n")
+
+        # Initialize an empty list to store the section headers
+        section_headers = []
+
+        # Loop through the lines and extract the section headers
+        for line in lines:
+            if line.startswith("ITEM INFORMATION:"):
+                # Extract the section header by removing the "ITEM INFORMATION:" prefix
+                section_header = line.replace("ITEM INFORMATION:", "")
+                section_headers.append(section_header)
+
+            # Combine the section headers into a single string with semicolon separator
+            iteminfo = "|".join(section_headers)
+    except:
+        iteminfo = None
+    return iteminfo
+
 def main():
     df = pd.DataFrame({'cik': [],
                         'conformed_period': [],
                         'filed_date': [],
                         'date_as_of_change': [],
                         'filing_type': [],
+                        'item_information': [],
                         'file_path': []})
     for cik in tqdm(cik_list):
         path = r"results\sec-edgar-filings\{}\{}\\".format(cik, filing_type)
@@ -43,8 +65,10 @@ def main():
                     file_contents = f.read()
                 # Get dates
                 conf_date, filed_date, change_date = get_date(file_contents)
+                # Get item information (what is the topic of the filing)
+                iteminfo = get_iteminfo(file_contents)
                 # New row data
-                new_row = pd.DataFrame({'cik': cik, 'conformed_period': conf_date, 'filed_date': filed_date, 'date_as_of_change': change_date, 'filing_type': filing_type, 'file_path': filename}, index=[0])
+                new_row = pd.DataFrame({'cik': cik, 'conformed_period': conf_date, 'filed_date': filed_date, 'date_as_of_change': change_date, 'item_information': iteminfo, 'filing_type': filing_type, 'file_path': filename}, index=[0])
                 # Initialize word count vector
                 word_count = np.zeros(len(word_list))
                 # Count for each key word
